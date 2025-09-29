@@ -1,0 +1,39 @@
+# ====================
+# General
+# ====================
+.DS_Store
+.vscode/
+
+# ====================
+# Node / TS
+# ====================
+node_modules/
+*.tsbuildinfo
+*.js
+*.d.ts
+!jest.config.js
+
+# ====================
+# CDK
+# ====================
+.cdk.staging
+cdk.out/
+
+# ====================
+# Python
+# ====================
+.venv/
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+
+# ===================
+# Logs 
+# ===================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
