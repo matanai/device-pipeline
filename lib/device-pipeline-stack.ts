@@ -49,7 +49,7 @@ export class DevicePipelineStack extends cdk.Stack {
             memorySize: number = 256,
         ): lambda.Function => {
             return new lambda.Function(this, lambdaId, {
-                runtime: lambda.Runtime.PYTHON_3_9,
+                runtime: lambda.Runtime.PYTHON_3_12,
                 handler: handlerName,
                 code: lambda.Code.fromAsset('lambda'),
                 timeout: cdk.Duration.seconds(timeoutSec),
