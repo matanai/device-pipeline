@@ -1,0 +1,29 @@
+{
+  "processed_devices":[
+    {
+      "type":"laptop",
+      "state":"erased",
+      "timestamp":"2023-06-16T13:00:00Z"
+    },
+    {
+      "type":"server",
+      "state":"erased",
+      "timestamp":"2023-06-16T12:00:00Z"
+    },
+    {
+      "type":"phone",
+      "state":"erased",
+      "timestamp":"2023-06-16T11:00:00Z"
+    },
+    {
+      "type":"phone",
+      "state":"erasure failed",
+      "timestamp":"2023-06-16T10:00:00Z"
+    },
+    {
+      "type":"laptop",
+      "state":"erased",
+      "timestamp":"2023-06-15T10:00:00Z"
+    }
+  ]
+}
