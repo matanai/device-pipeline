@@ -39,6 +39,7 @@ export class DevicePipelineStack extends cdk.Stack {
             TABLE_NAME: table.tableName,
             QUEUE_URL: queue.queueUrl,
             BUCKET_NAME: bucket.bucketName,
+            LOG_LEVEL: 'DEBUG'
         };
 
         // Lambda factory method
