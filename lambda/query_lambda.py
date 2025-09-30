@@ -1,16 +1,17 @@
+import datetime
 import json
 import os
-import logging
 import boto3
-import datetime
+import logging
+from boto3.dynamodb.conditions import Key
 from typing import Any, Dict, List
 
-from boto3.dynamodb.conditions import Key
+TABLE_NAME  = os.environ.get("TABLE_NAME")
+LOG_LEVEL   = os.getenv("LOG_LEVEL", "INFO").upper()
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(getattr(logging, LOG_LEVEL, logging.INFO))
 
-TABLE_NAME = os.environ.get("TABLE_NAME")
 db = boto3.resource("dynamodb")
 table = db.Table(TABLE_NAME)
 
@@ -30,21 +31,27 @@ def _validate_date(date_str: str) -> bool:
 
 def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """Query aggregates from DynamoDB"""
+
+    req_id = getattr(context, "aws_request_id", None)
     params = event.get("queryStringParameters") or {}
     date = params.get("date")
 
+    logger.info(f"start path={event.get('path')}, query={params}, req_id={req_id}")
+
     if not date:
-        return _resp(400, {"error": "Missing required query param: date=YYYY-MM-DD"})
+        logger.warning(f"bad_request: missing date, req_id={req_id}")
+        return _resp(400, { "error": "Missing required query param: date=YYYY-MM-DD" })
 
     if not _validate_date(date):
-        return _resp(400, {"error": "Invalid date format; expected YYYY-MM-DD"})
+        logger.warning(f"bad_request: invalid date format, req_id={req_id}")
+        return _resp(400, { "error": "Invalid date format; expected YYYY-MM-DD" })
 
     # Query the partition
     try:
         resp = table.query(KeyConditionExpression=Key("date").eq(date))
-    except Exception as ex:
-        logger.warning(f"Failed to query DynamoDB table: {ex}")
-        return _resp(500, {"error": "Internal server error"})
+    except Exception:
+        logger.exception(f"ddb_error, req_id={req_id}")
+        return _resp(500, { "error": "Internal server error" })
 
     items: List[Dict[str, Any]] = resp.get("Items", [])
 
@@ -58,6 +65,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         }
         for i in items
     ]
+
+    logger.debug(f"queried items={len(result)}, req_id={req_id}")
 
     # HTML view if path ends with /stats-html
     path = event.get('path', '')
@@ -82,6 +91,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             </body>
         </html>
         """
+        logger.debug(f"html_rendered rows={len(result)}, req_id={req_id}")
         return _resp(200, html, content_type="text/html")
 
     return _resp(200, result)
