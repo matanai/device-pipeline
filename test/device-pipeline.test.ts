@@ -1,17 +1,23 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as DevicePipeline from '../lib/device-pipeline-stack';
+import { App } from 'aws-cdk-lib';
+import { Template, Match } from 'aws-cdk-lib/assertions';
+import { DevicePipelineStack } from '../lib/device-pipeline-stack';
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/device-pipeline-stack.ts
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//     // WHEN
-//   const stack = new DevicePipeline.DevicePipelineStack(app, 'MyTestStack');
-//     // THEN
-//   const template = Template.fromStack(stack);
+test('creates the three app lambdas', () => {
+    const app = new App();
+    const stack = new DevicePipelineStack(app, 'TestStack');
+    const template = Template.fromStack(stack);
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
+    // Verify each app lambda by handler
+    template.hasResourceProperties('AWS::Lambda::Function', {
+        Handler: 'ingest_lambda.handler',
+        Runtime: Match.stringLikeRegexp('python'),
+    });
+    template.hasResourceProperties('AWS::Lambda::Function', {
+        Handler: 'process_lambda.handler',
+        Runtime: Match.stringLikeRegexp('python'),
+    });
+    template.hasResourceProperties('AWS::Lambda::Function', {
+        Handler: 'query_lambda.handler',
+        Runtime: Match.stringLikeRegexp('python'),
+    });
 });
