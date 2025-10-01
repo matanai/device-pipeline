@@ -52,7 +52,9 @@ export class DevicePipelineStack extends cdk.Stack {
             return new lambda.Function(this, lambdaId, {
                 runtime: lambda.Runtime.PYTHON_3_12,
                 handler: handlerName,
-                code: lambda.Code.fromAsset('lambda'),
+                code: lambda.Code.fromAsset('lambdas', {
+                    exclude: ['**/__pycache__/**', '**/*.pyc', 'tests_py/**', '**/tests/**']
+                }),
                 timeout: cdk.Duration.seconds(timeoutSec),
                 memorySize: memorySize,
                 environment: commonsEnv,
