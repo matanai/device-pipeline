@@ -83,9 +83,7 @@ Counts are grouped by `date`, `type` and `state` in DynamoDB table where each it
 
 The processor lambda will atomically add `count :1` for each incoming device entry
 
-> Although each item contains `timestamp`, only the date part is used since the aggregation is defined *per date*. This  
-> prevents every event from creating a separate counter defeating the purpose of aggregation (millis will effectively 
-> make every record unique). Nevertheless, the raw data with exact timestamps is always available in S3
+> Although each item contains `timestamp`, only the date part is used since the aggregation is defined *per date*. This prevents every event from creating a separate counter defeating the purpose of aggregation (millis will effectively make every record unique). Nevertheless, the raw data with exact timestamps is always available in S3
 
 ## Deployment
 
